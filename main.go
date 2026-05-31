@@ -44,10 +44,16 @@ func ensureDefaultRegexFile(path string) error {
 	defaultPatterns := embedded.Patterns
 
 	// merge only missing patterns
+	changed := false
 	for name, pattern := range defaultPatterns {
 		if _, exists := userPatterns[name]; !exists {
 			userPatterns[name] = pattern
+			changed = true
 		}
+	}
+
+	if !changed {
+		return nil
 	}
 
 	// rebuild yaml structure
