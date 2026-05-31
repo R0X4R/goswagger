@@ -46,7 +46,7 @@ go install github.com/R0X4R/goswagger@latest
 
 After the first run, `goswagger` automatically seeds the default regex file at:
 
-```text
+```bash
 ~/.config/goswagger/regex.yaml
 ```
 
