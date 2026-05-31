@@ -1,4 +1,4 @@
-![goswagger](htt.github/image.png)
+![goswagger](https://github.com/R0X4R/goswagger/blob/main/.github/image.png?raw=true)
 
 `goswagger` is a minimal [**SwaggerHub**](https://swagger.io/) **OSINT scanner** written in Go.
 It searches SwaggerHub APIs for a query, fetches **discovered target URLs**, and matches each **fetched body against regex patterns** from `regex.yaml`.

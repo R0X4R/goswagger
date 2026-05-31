@@ -21,3 +21,6 @@ Thumbs.db
 # Go workspace metadata
 go.work
 go.work.sum
+
+#temporary till I fix it
+workflows/
