@@ -9,24 +9,70 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"gopkg.in/yaml.v3"
 
 	optionspkg "github.com/R0X4R/goswagger/pkg"
 )
 
+//go:embed regex.yaml
 var defaultRegexYAML []byte
 
 func ensureDefaultRegexFile(path string) error {
-	_, err := os.Stat(path)
-	if err == nil {
-		return nil
-	}
-	if !os.IsNotExist(err) {
-		return err
-	}
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return err
 	}
-	return os.WriteFile(path, defaultRegexYAML, 0o644)
+
+	// if file doesn't exist > write directly
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return os.WriteFile(path, defaultRegexYAML, 0o644)
+	}
+
+	// load existing user file
+	userPatterns, err := optionspkg.LoadRegexFile(path)
+	if err != nil {
+		return err
+	}
+	
+	if userPatterns == nil {
+		userPatterns = make(map[string]optionspkg.Pattern)
+	}
+
+	var embedded struct {
+		Patterns map[string]optionspkg.Pattern `yaml:"patterns"`
+	}
+
+	if err := yaml.Unmarshal(defaultRegexYAML, &embedded); err != nil {
+		return err
+	}
+
+	defaultPatterns := embedded.Patterns
+
+	// merge only missing patterns
+	changed := false
+	for name, pattern := range defaultPatterns {
+		if _, exists := userPatterns[name]; !exists {
+			userPatterns[name] = pattern
+			changed = true
+		}
+	}
+
+	if !changed {
+		return nil
+	}
+
+	// rebuild yaml structure
+	out := struct {
+		Patterns map[string]optionspkg.Pattern `yaml:"patterns"`
+	}{
+		Patterns: userPatterns,
+	}
+
+	data, err := yaml.Marshal(out)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(path, data, 0o644)
 }
 
 func main() {
@@ -127,7 +173,10 @@ func main() {
 					fmt.Print(line)
 					if out != nil {
 						outMu.Lock()
-						out.WriteString(line)
+						// out.WriteString(line)
+						if _, err := out.WriteString(line); err != nil {
+							fmt.Fprintln(os.Stderr, "failed to write output:", err)
+						}
 						outMu.Unlock()
 					}
 				}
