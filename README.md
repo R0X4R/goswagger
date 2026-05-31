@@ -50,7 +50,7 @@ After the first run, `goswagger` automatically seeds the default regex file at:
 ~/.config/goswagger/regex.yaml
 ```
 
-If the file already exists, it is left unchanged so your custom regex edits are preserved.
+If the file already exists, goswagger preserves your existing custom regex entries while automatically merging any missing default patterns from newer releases. The regex file may be rewritten when new default patterns are added so the local configuration stays up to date without removing user customizations.
 
 **Install from source**
 
