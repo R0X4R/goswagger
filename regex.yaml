@@ -1,0 +1,285 @@
+patterns:
+  aws_access_key_id:
+    regex: 'A[SK]IA[0-9A-Z]{16}'
+    description: AWS Access Key ID
+    confidence: high
+
+  aws_secret_access_key:
+    regex: '(?i)aws[_\-\s]?(secret[_\-\s]?)?access[_\-\s]?key[\s]*[:=][\s]*[A-Za-z0-9/+=]{40}'
+    description: AWS Secret Access Key
+    confidence: high
+
+  amazon_s3_url:
+    regex: '[a-zA-Z0-9_\-]*\.s3\.amazonaws\.com|s3://[A-Za-z0-9.\-_]+'
+    description: Amazon S3 Bucket URL
+    confidence: high
+
+  google_api_key:
+    regex: 'AIza[0-9A-Za-z\-_]{35}'
+    description: Google API Key
+    confidence: high
+
+  google_oauth_token:
+    regex: 'ya29\.[0-9A-Za-z\-_]+'
+    description: Google OAuth Access Token
+    confidence: high
+
+  firebase_server_key:
+    regex: 'AAAA[A-Za-z0-9_-]{7}:[A-Za-z0-9_-]{140}'
+    description: Firebase Server Key
+    confidence: high
+
+  gcp_private_key_id:
+    regex: '"private_key_id":\s*"[a-zA-Z0-9]{40}"'
+    description: GCP Service Account Private Key ID
+    confidence: high
+
+  stripe_live_secret_key:
+    regex: 'sk_live_[0-9a-zA-Z]{24}'
+    description: Stripe Live Secret Key
+    confidence: high
+
+  stripe_test_secret_key:
+    regex: 'sk_test_[0-9a-zA-Z]{24}'
+    description: Stripe Test Secret Key
+    confidence: high
+
+  stripe_restricted_key:
+    regex: 'rk_live_[0-9a-zA-Z]{24}'
+    description: Stripe Restricted Key
+    confidence: high
+
+  stripe_webhook_secret:
+    regex: 'whsec_[a-zA-Z0-9]{32,}'
+    description: Stripe Webhook Secret
+    confidence: high
+
+  github_pat:
+    regex: 'ghp_[a-zA-Z0-9]{36}'
+    description: GitHub Personal Access Token
+    confidence: high
+
+  github_oauth_token:
+    regex: 'gho_[a-zA-Z0-9]{36}'
+    description: GitHub OAuth Token
+    confidence: high
+
+  github_app_token:
+    regex: '(ghu|ghs)_[a-zA-Z0-9]{36}'
+    description: GitHub App Token
+    confidence: high
+
+  git_credential_url:
+    regex: 'https?://[a-zA-Z0-9_\-]+:[a-zA-Z0-9_\-]+@github\.com'
+    description: Git Credential Embedded in URL
+    confidence: high
+
+  gitlab_personal_access_token:
+    regex: 'glpat-[a-zA-Z0-9_\-]{20}'
+    description: GitLab Personal Access Token
+    confidence: high
+
+  slack_bot_token:
+    regex: 'xoxb-[0-9]{11}-[0-9]{11}-[a-zA-Z0-9]{24}'
+    description: Slack Bot Token
+    confidence: high
+
+  slack_user_token:
+    regex: 'xoxp-[0-9]{11}-[0-9]{11}-[0-9]{11}-[a-zA-Z0-9]{32}'
+    description: Slack User Token
+    confidence: high
+
+  slack_webhook_url:
+    regex: 'https://hooks\.slack\.com/services/T[a-zA-Z0-9_]{8}/B[a-zA-Z0-9_]{8}/[a-zA-Z0-9_]{24}'
+    description: Slack Incoming Webhook URL
+    confidence: high
+
+  twilio_account_sid:
+    regex: 'AC[a-zA-Z0-9_\-]{32}'
+    description: Twilio Account SID
+    confidence: high
+
+  twilio_api_key:
+    regex: 'SK[0-9a-fA-F]{32}'
+    description: Twilio API Key
+    confidence: high
+
+  sendgrid_api_key:
+    regex: 'SG\.[a-zA-Z0-9_\-]{22}\.[a-zA-Z0-9_\-]{43}'
+    description: SendGrid API Key
+    confidence: high
+
+  mailgun_api_key:
+    regex: 'key-[0-9a-zA-Z]{32}'
+    description: Mailgun API Key
+    confidence: high
+
+  mailchimp_api_key:
+    regex: '[0-9a-f]{32}-us[0-9]{1,2}'
+    description: Mailchimp API Key
+    confidence: high
+
+  mysql_connection_string:
+    regex: 'mysql://[a-zA-Z0-9]+:[a-zA-Z0-9.\-_]+@[a-zA-Z0-9.\-_]+:[0-9]+/[a-zA-Z0-9]+'
+    description: MySQL Connection URI
+    confidence: high
+
+  postgresql_connection_string:
+    regex: 'postgres(?:ql)?://[a-zA-Z0-9_\-]+:[^@\s]+@[a-zA-Z0-9.\-_]+(?::[0-9]+)?/[a-zA-Z0-9_\-]+'
+    description: PostgreSQL Connection URI
+    confidence: high
+
+  mongodb_connection_string:
+    regex: 'mongodb(?:\+srv)?://[a-zA-Z0-9_\-]+:[^@\s]+@[a-zA-Z0-9.\-_]+'
+    description: MongoDB Connection URI
+    confidence: high
+
+  redis_connection_string:
+    regex: 'redis://[a-zA-Z0-9_\-:@.\-]+:[0-9]+'
+    description: Redis Connection URI
+    confidence: high
+
+  azure_storage_connection_string:
+    regex: 'DefaultEndpointsProtocol=https;AccountName=[^;]+;AccountKey=[A-Za-z0-9+/=]{88}'
+    description: Azure Storage Account Connection String
+    confidence: high
+
+  azure_sas_token:
+    regex: 'sv=[0-9\-]+&s[a-z]=.*&sig=[A-Za-z0-9%+/]+'
+    description: Azure SAS Token
+    confidence: high
+
+  rsa_private_key:
+    regex: '-----BEGIN RSA PRIVATE KEY-----'
+    description: RSA Private Key
+    confidence: high
+
+  ssh_openssh_private_key:
+    regex: '-----BEGIN OPENSSH PRIVATE KEY-----'
+    description: OpenSSH Private Key
+    confidence: high
+
+  pgp_private_key_block:
+    regex: '-----BEGIN PGP PRIVATE KEY BLOCK-----'
+    description: PGP Private Key Block
+    confidence: high
+
+  pkcs8_private_key:
+    regex: '-----BEGIN PRIVATE KEY-----'
+    description: PKCS#8 Private Key
+    confidence: high
+
+  json_web_token:
+    regex: 'ey[A-Za-z0-9\-_=]+\.[A-Za-z0-9\-_=]+\.?[A-Za-z0-9\-_.+/=]*'
+    description: JSON Web Token (JWT)
+    confidence: medium
+
+  authorization_bearer:
+    regex: '(?i)bearer\s+[A-Za-z0-9_\-\.]{20,}'
+    description: HTTP Bearer Token
+    confidence: medium
+
+  authorization_basic:
+    regex: '(?i)basic\s+[A-Za-z0-9+/=]{8,}'
+    description: HTTP Basic Auth Header
+    confidence: medium
+
+  jira_personal_access_token:
+    regex: 'ATATTAC[a-zA-Z0-9]{24,48}'
+    description: Jira / Atlassian PAT
+    confidence: high
+
+  npm_access_token:
+    regex: 'npm_[a-zA-Z0-9]{36}'
+    description: npm Access Token
+    confidence: high
+
+  discord_bot_token:
+    regex: '[MN][a-zA-Z0-9]{23}\.[a-zA-Z0-9_\-]{6}\.[a-zA-Z0-9_\-]{27}'
+    description: Discord Bot Token
+    confidence: high
+
+  discord_webhook_url:
+    regex: 'https://discord(?:app)?\.com/api/webhooks/[0-9]{17,19}/[a-zA-Z0-9_\-]{68}'
+    description: Discord Webhook URL
+    confidence: high
+
+  telegram_bot_token:
+    regex: '[0-9]{8,10}:[a-zA-Z0-9_\-]{35}'
+    description: Telegram Bot API Token
+    confidence: medium
+
+  sentry_dsn:
+    regex: 'https://[a-f0-9]{32}@[a-z0-9]+\.ingest\.sentry\.io/[0-9]+'
+    description: Sentry DSN
+    confidence: high
+
+  newrelic_license_key:
+    regex: 'NRAK-[A-Z0-9]{27}'
+    description: New Relic License Key
+    confidence: high
+
+  generic_api_key:
+    regex: '(?i)(api[_\-]?key|apikey)[\s]*[:=][\s]*[a-zA-Z0-9_\-]{16,64}'
+    description: Generic API Key
+    confidence: medium
+
+  generic_secret_key:
+    regex: '(?i)(secret[_\-]?key|app[_\-]?secret|client[_\-]?secret)[\s]*[:=][\s]*[a-zA-Z0-9_\-\.~+/]{16,64}'
+    description: Generic Secret Key
+    confidence: medium
+
+  possible_credentials:
+    regex: '(?i)(password\s*[`=:"]+\s*\S+|passwd\s*[`=:"]+\s*\S+|pwd\s*[`=:"]*\s*\S+)'
+    description: Possible Cleartext Credentials
+    confidence: medium
+
+  generic_password_in_url:
+    regex: '[a-zA-Z]{3,10}://[^/\s:@]{3,20}:[^/\s:@]{3,20}@[a-zA-Z0-9\-._]+'
+    description: Password Embedded in URL
+    confidence: medium
+
+  private_ip_range:
+    regex: '(192\.168\.[0-9]{1,3}\.[0-9]{1,3}|10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9]|2[0-9]|3[01])\.[0-9]{1,3}\.[0-9]{1,3})'
+    description: Private / Internal IP Address
+    confidence: medium
+
+  email_address:
+    regex: '[\w.\-]+@[\w.\-]+\.\w+'
+    description: Email Address
+    confidence: low
+
+  twilio_app_sid:
+    regex: 'AP[a-zA-Z0-9_\-]{32}'
+    description: Twilio App SID
+    confidence: high
+
+  ssh_dsa_private_key:
+    regex: '-----BEGIN DSA PRIVATE KEY-----'
+    description: SSH DSA Private Key
+    confidence: high
+
+  ssh_ec_private_key:
+    regex: '-----BEGIN EC PRIVATE KEY-----'
+    description: SSH EC Private Key
+    confidence: high
+
+  google_captcha:
+    regex: '6L[0-9A-Za-z\-_]{38}|^6[0-9a-zA-Z_-]{39}$'
+    description: Google reCAPTCHA Site Key
+    confidence: high
+
+  slack_api_token:
+    regex: '"api_token":"(xox[a-zA-Z]-[a-zA-Z0-9\-]+)"'
+    description: Slack API Token
+    confidence: high
+
+  md5_hash:
+    regex: "(?<=[:=\\s\"'])([A-Fa-f0-9]{32})(?=[\\s,\"']|\\b)"
+    description: MD5 Hash
+    confidence: low
+
+  ipv4_address:
+    regex: '(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
+    description: IPv4 Address
+    confidence: low

@@ -1,0 +1,23 @@
+# Binaries
+*.exe
+*.test
+*.out
+
+# Build artifacts
+bin/
+dist/
+results/
+old/
+
+# Coverage
+coverage.out
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Go workspace metadata
+go.work
+go.work.sum
