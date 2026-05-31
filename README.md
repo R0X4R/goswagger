@@ -52,10 +52,10 @@ After the first run, `goswagger` automatically seeds the default regex file at:
 
 If the file already exists, it is left unchanged so your custom regex edits are preserved.
 
-**Build from source**
+**Install from source**
 
 ```bash
-git clone https://github.com/R0X4R/goswagger.git && cd goswagger && go build .
+git clone https://github.com/R0X4R/goswagger.git && cd goswagger && go install .
 ```
 
 ## Usage
