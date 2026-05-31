@@ -32,6 +32,10 @@ func ensureDefaultRegexFile(path string) error {
 	if err != nil {
 		return err
 	}
+	
+	if userPatterns == nil {
+		userPatterns = make(map[string]optionspkg.Pattern)
+	}
 
 	var embedded struct {
 		Patterns map[string]optionspkg.Pattern `yaml:"patterns"`
