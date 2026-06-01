@@ -201,10 +201,10 @@ func main() {
 				confidence := strings.ToUpper(m.Confidence)
 
 				line := fmt.Sprintf(
-					"[%s] [%s] %s [%s]\n",
+					"[%s] %s [%s] [%s]\n",
 					confidence,
-					prettyName,
 					url,
+					prettyName,
 					m.Match,
 				)
 
