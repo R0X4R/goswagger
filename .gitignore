@@ -23,4 +23,4 @@ go.work
 go.work.sum
 
 #temporary till I fix it
-workflows/
+/workflows/

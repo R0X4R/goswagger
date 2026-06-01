@@ -1,0 +1,119 @@
+name: Auto Tag Main
+
+on:
+  # Only runs for commits merged/pushed to main. Tag pushes do not match this filter,
+  # which prevents this workflow from triggering itself in a loop.
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  # Serialize version bumps on main so two close merges cannot race tag creation.
+  group: auto-tag-main
+  cancel-in-progress: false
+
+jobs:
+  bump-and-tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout full history (required for tags + commit analysis)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Calculate next semantic version
+        id: semver
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          latest_tag="$(git tag -l 'v*' --sort=-version:refname | head -n 1 || true)"
+          if [[ -z "$latest_tag" ]]; then
+            latest_tag="v0.0.0"
+            range="HEAD"
+          else
+            range="${latest_tag}..HEAD"
+          fi
+
+          # If HEAD is already tagged with a semver tag, do nothing on re-runs.
+          if git tag --points-at HEAD | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "already_tagged=true" >> "$GITHUB_OUTPUT"
+            echo "latest_tag=$latest_tag" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          subjects="$(git log --format=%s $range)"
+          bodies="$(git log --format=%b $range)"
+
+          # Default: patch bump
+          bump="patch"
+
+          # Conventional Commits support:
+          # - major: any BREAKING CHANGE footer or ! in type scope (e.g. feat!: ...)
+          # - minor: at least one feat commit
+          if echo "$subjects" | grep -Eiq '^[a-z]+(\([^)]+\))?!:' || echo "$bodies" | grep -Eiq 'BREAKING CHANGE:'; then
+            bump="major"
+          elif echo "$subjects" | grep -Eiq '^feat(\([^)]+\))?:'; then
+            bump="minor"
+          fi
+
+          version="${latest_tag#v}"
+          IFS='.' read -r major minor patch <<< "$version"
+
+          case "$bump" in
+            major)
+              major=$((major + 1))
+              minor=0
+              patch=0
+              ;;
+            minor)
+              minor=$((minor + 1))
+              patch=0
+              ;;
+            patch)
+              patch=$((patch + 1))
+              ;;
+          esac
+
+          next_tag="v${major}.${minor}.${patch}"
+
+          echo "already_tagged=false" >> "$GITHUB_OUTPUT"
+          echo "latest_tag=$latest_tag" >> "$GITHUB_OUTPUT"
+          echo "bump=$bump" >> "$GITHUB_OUTPUT"
+          echo "next_tag=$next_tag" >> "$GITHUB_OUTPUT"
+
+      - name: Create and push tag
+        if: steps.semver.outputs.already_tagged != 'true'
+        env:
+          # Use a PAT/GitHub App token to allow the resulting tag push event to trigger
+          # other workflows (like existing Release on tag push).
+          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${RELEASE_TOKEN:-}" ]]; then
+            echo "::error::Missing RELEASE_TOKEN secret. Use a PAT or GitHub App token with contents:write so tag pushes trigger the Release workflow."
+            exit 1
+          fi
+
+          tag="${{ steps.semver.outputs.next_tag }}"
+          git tag "$tag"
+          git remote set-url origin "https://x-access-token:${RELEASE_TOKEN}@github.com/${{ github.repository }}.git"
+          git push origin "$tag"
+
+      - name: Summary
+        if: steps.semver.outputs.already_tagged != 'true'
+        run: |
+          echo "Created tag: ${{ steps.semver.outputs.next_tag }}"
+          echo "Bump type:  ${{ steps.semver.outputs.bump }}"
+          echo "Previous:   ${{ steps.semver.outputs.latest_tag }}"
