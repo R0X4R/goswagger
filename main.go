@@ -9,9 +9,20 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/fatih/color"
 	"gopkg.in/yaml.v3"
 
 	optionspkg "github.com/R0X4R/goswagger/pkg"
+)
+
+var (
+	highColor   = color.New(color.FgRed, color.Bold)
+	mediumColor = color.New(color.FgYellow, color.Bold)
+	lowColor    = color.New(color.FgBlue, color.Bold)
+
+	patternColor = color.New(color.FgCyan, color.Bold)
+	matchColor   = color.New(color.FgGreen)
 )
 
 //go:embed regex.yaml
@@ -22,7 +33,7 @@ func ensureDefaultRegexFile(path string) error {
 		return err
 	}
 
-	// if file doesn't exist > write directly
+	// if file doesn't exist -> write directly
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return os.WriteFile(path, defaultRegexYAML, 0o644)
 	}
@@ -32,11 +43,13 @@ func ensureDefaultRegexFile(path string) error {
 	if err != nil {
 		return err
 	}
-	
+
+	// safety check
 	if userPatterns == nil {
 		userPatterns = make(map[string]optionspkg.Pattern)
 	}
 
+	// load embedded default patterns
 	var embedded struct {
 		Patterns map[string]optionspkg.Pattern `yaml:"patterns"`
 	}
@@ -49,6 +62,7 @@ func ensureDefaultRegexFile(path string) error {
 
 	// merge only missing patterns
 	changed := false
+
 	for name, pattern := range defaultPatterns {
 		if _, exists := userPatterns[name]; !exists {
 			userPatterns[name] = pattern
@@ -56,6 +70,7 @@ func ensureDefaultRegexFile(path string) error {
 		}
 	}
 
+	// no new defaults added
 	if !changed {
 		return nil
 	}
@@ -81,10 +96,15 @@ func main() {
 		fmt.Fprintln(os.Stderr, "failed to resolve config directory:", err)
 		os.Exit(1)
 	}
+
 	options, err := optionspkg.ParseOptions()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
+	}
+
+	if options.NoColor {
+		color.NoColor = true
 	}
 
 	if options.RegexFile == defaultRegexFile {
@@ -97,7 +117,8 @@ func main() {
 	if options.BaseURL != "" {
 		optionspkg.SwaggerBaseURLFormat = options.BaseURL
 	}
-	// set global maxPages
+
+	// set global max pages
 	if options.MaxPages >= 0 {
 		optionspkg.MaxFetchPages = options.MaxPages
 	}
@@ -122,12 +143,18 @@ func main() {
 	}
 
 	sem := make(chan struct{}, options.Threads)
+
 	var wg sync.WaitGroup
+	var printMu sync.Mutex
 
-	client := &http.Client{Timeout: 15 * time.Second}
+	client := &http.Client{
+		Timeout: 15 * time.Second,
+	}
 
+	// output file support
 	var out *os.File
 	var outMu sync.Mutex
+
 	if options.OutputFile != "" {
 		if err := os.MkdirAll(filepath.Dir(options.OutputFile), 0o755); err != nil {
 			fmt.Fprintln(os.Stderr, "failed to create output directory:", err)
@@ -137,48 +164,81 @@ func main() {
 		f, err := os.OpenFile(
 			options.OutputFile,
 			os.O_CREATE|os.O_WRONLY|os.O_APPEND,
-			0644,
+			0o644,
 		)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "failed to open output file:", err)
 			os.Exit(1)
 		}
+
 		out = f
 		defer out.Close()
 	}
 
 	for _, u := range urls {
 		wg.Add(1)
+
 		sem <- struct{}{}
+
 		go func(url string) {
 			defer wg.Done()
 			defer func() { <-sem }()
+
 			matches, err := optionspkg.ProcessURL(client, url, compiled)
 			if err != nil {
 				return
 			}
-			if len(matches) > 0 {
-				for _, m := range matches {
-					// Minimal output: url | pattern | match
-					// format pattern name: convert underscores to spaces and uppercase
-					prettyName := strings.ToUpper(strings.ReplaceAll(m.Name, "_", " "))
 
-					line := fmt.Sprintf(
-						"[%s] [%s] %s [%s]\n",
-						strings.ToUpper(m.Confidence),
-						prettyName,
-						url,
-						m.Match,
-					)
-					fmt.Print(line)
-					if out != nil {
-						outMu.Lock()
-						// out.WriteString(line)
-						if _, err := out.WriteString(line); err != nil {
-							fmt.Fprintln(os.Stderr, "failed to write output:", err)
-						}
-						outMu.Unlock()
+			if len(matches) == 0 {
+				return
+			}
+
+			for _, m := range matches {
+				prettyName := strings.ToUpper(
+					strings.ReplaceAll(m.Name, "_", " "),
+				)
+
+				confidence := strings.ToUpper(m.Confidence)
+
+				line := fmt.Sprintf(
+					"[%s] %s [%s] [%s]\n",
+					confidence,
+					url,
+					prettyName,
+					m.Match,
+				)
+
+				var confidencePrinter func(format string, a ...interface{}) (int, error)
+
+				switch confidence {
+				case "HIGH":
+					confidencePrinter = highColor.Printf
+				case "MEDIUM":
+					confidencePrinter = mediumColor.Printf
+				default:
+					confidencePrinter = lowColor.Printf
+				}
+
+				printMu.Lock()
+
+				confidencePrinter("[%s] ", confidence)
+				fmt.Printf("%s ", url)
+				patternColor.Printf("[%s] ", prettyName)
+				fmt.Printf("[")
+				matchColor.Printf("%s", m.Match)
+				fmt.Print("]\n")
+
+				printMu.Unlock()
+
+				// optional file output
+				if out != nil {
+					outMu.Lock()
+
+					if _, err := out.WriteString(line); err != nil {
+						fmt.Fprintln(os.Stderr, "failed to write output:", err)
 					}
+
+					outMu.Unlock()
 				}
 			}
 		}(u)
