@@ -87,7 +87,7 @@ Flags:
 Matches are printed in a compact bracketed format:
 
 ```text
-[HIGH] https://example.com/swagger.json [GITHUB PERSONAL ACCESS TOKEN][ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]
+[HIGH] https://example.com/swagger.json [GITHUB PERSONAL ACCESS TOKEN] [ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]
 ```
 
 ## Regex File Format
