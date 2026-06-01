@@ -80,7 +80,7 @@ Flags:
 | *-m*       | *--max-pages* | Maximum SwaggerHub pages to fetch. `0` means all pages.                |
 | *-b*       | *--base-url* | Override the SwaggerHub search URL format.                             |
 | *-o*       | *--output*   | Append matches to a text file while still printing to stdout.          |
-| *-n*       | *-no-color*   | Disable colored terminal output          |
+| *-n*       | *--no-color* | Disable colored terminal output.                                     |
 
 ## Output
 
