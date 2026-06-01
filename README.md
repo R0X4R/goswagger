@@ -1,6 +1,6 @@
 ![goswagger](https://github.com/R0X4R/goswagger/blob/main/.github/image.png?raw=true)
 
-`goswagger` is a minimal [**SwaggerHub**](https://swagger.io/) **OSINT scanner** written in Go.
+**GOSWAGGER** is a minimal [**SwaggerHub**](https://swagger.io/) **OSINT scanner** written in Go.
 It searches SwaggerHub APIs for a query, fetches **discovered target URLs**, and matches each **fetched body against regex patterns** from `regex.yaml`.
 
 ## Background
@@ -36,7 +36,7 @@ Public API responses can accidentally include sensitive values. OSINT scanning h
 
 ### Detection Workflow
 
-`goswagger` queries SwaggerHub, collects discovered target URLs, downloads each response, and applies regex patterns to detect potential secrets and credentials.
+**GOSWAGGER** queries SwaggerHub, collects discovered target URLs, downloads each response, and applies regex patterns to detect potential secrets and credentials.
 
 ## Install
 
@@ -72,21 +72,22 @@ goswagger -q example.com -t 25
 
 Flags:
 
-| Flag              | Description                                                               |
-| ----------------- | ------------------------------------------------------------------------- |
-| `-q, -query`      | Search query required by SwaggerHub                                       |
-| `-r, -regex-file` | Path to the regex YAML file, defaults to `~/.config/goswagger/regex.yaml` |
-| `-t, -threads`    | Worker count for fetching and matching, defaults to `25`                  |
-| `-m, -max-pages`  | Maximum SwaggerHub pages to fetch, `0` means all pages                    |
-| `-b, -base-url`   | Override the SwaggerHub search URL format                                 |
-| `-o, -output`     | Append matches to a text file while still printing to stdout              |
+| Short Flag | Long Flag    | Description                                                            |
+|------------|--------------|------------------------------------------------------------------------|
+| *-q*       | *--query*    | Search query required by SwaggerHub.                                   |
+| *-r*       | *--regex-file* | Path to the regex YAML file. Defaults to `~/.config/goswagger/regex.yaml`. |
+| *-t*       | *--threads*  | Worker count for fetching and matching. Defaults to `25`.              |
+| *-m*       | *--max-pages* | Maximum SwaggerHub pages to fetch. `0` means all pages.                |
+| *-b*       | *--base-url* | Override the SwaggerHub search URL format.                             |
+| *-o*       | *--output*   | Append matches to a text file while still printing to stdout.          |
+| *-n*       | *-no-color*   | Disable colored terminal output          |
 
 ## Output
 
 Matches are printed in a compact bracketed format:
 
 ```text
-[HIGH] [GITHUB PERSONAL ACCESS TOKEN] https://example.com/swagger.json [ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]
+[HIGH] https://example.com/swagger.json [GITHUB PERSONAL ACCESS TOKEN][ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx]
 ```
 
 ## Regex File Format
@@ -149,7 +150,7 @@ patterns:
 **Output structure:**
 
 ```text
-[CONFIDENCE] [PATTERN NAME] URL [MATCH]
+[CONFIDENCE] URL [PATTERN NAME] [MATCH]
 ```
 
 ## Notes About Regex Compatibility
