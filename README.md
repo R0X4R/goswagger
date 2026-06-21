@@ -74,13 +74,13 @@ Flags:
 
 | Short Flag | Long Flag    | Description                                                            |
 |------------|--------------|------------------------------------------------------------------------|
-| *-q*       | *--query*    | Search query required by SwaggerHub.                                   |
-| *-r*       | *--regex-file* | Path to the regex YAML file. Defaults to `~/.config/goswagger/regex.yaml`. |
-| *-t*       | *--threads*  | Worker count for fetching and matching. Defaults to `25`.              |
-| *-m*       | *--max-pages* | Maximum SwaggerHub pages to fetch. `0` means all pages.                |
-| *-b*       | *--base-url* | Override the SwaggerHub search URL format.                             |
-| *-o*       | *--output*   | Append matches to a text file while still printing to stdout.          |
-| *-n*       | *--no-color* | Disable colored terminal output.                                     |
+| -q       | **--query**    | Search query required by SwaggerHub.                                   |
+| -r       | **--regex-file** | Path to the regex YAML file. Defaults to `~/.config/goswagger/regex.yaml`. |
+| -t       | **--threads**  | Worker count for fetching and matching. Defaults to `25`.              |
+| -m       | **--max-pages** | Maximum SwaggerHub pages to fetch. `0` means all pages.                |
+| -b       | **--base-url** | Override the SwaggerHub search URL format.                             |
+| -o       | **--output**   | Append matches to a text file while still printing to stdout.          |
+| -n       | **--no-color** | Disable colored terminal output.                                     |
 
 ## Output
 
