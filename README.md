@@ -157,7 +157,7 @@ patterns:
 
 * Regexes use Go's `regexp` engine
 * Invalid regex entries are skipped automatically
-* YAML strings should usually use single quotes `'...'`
+* YAML strings should usually use single quotes `'....'`
 * Escape backslashes properly when needed
 
 **Example:**
